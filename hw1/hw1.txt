@@ -1,0 +1,91 @@
+Problem 1
+=========
+In order for list a to be a subset of list b, all elements of list a must be
+found in list b. To solve this problem, I used pattern matching to separate
+list a into a head element and tail. The function returns true if the head
+element is contained in b AND the same holds true for recursive calls with the
+tail. The base case is an empty list, in which we know we've "iterated" through
+the entire list a and thus the function returns true.
+
+Problem 2
+=========
+Two lists a and b are equal if and only if a is a subset of b and b is a subset
+of a. We can use the subset function we defined in Problem 1 and a logical
+AND operator to easily solve this problem.
+
+Problem 3
+=========
+To solve the set union problem, I defined a helper function `add_to_union` that
+maintains a set of unique items. It uses pattern matching and head/tail
+recursion to check if elements already exist in the set, and appends them if
+not. Then, I run `add_to_union` on both lists a and b with an initial empty
+list to arrive at the union of a and b.
+
+This helper function is necessary since I wanted to make sure there are no
+duplicate values in the output. Even if an input list initially has duplicates,
+they will be eliminated once the `add_to_union` function is used.
+
+  # add_to_union [1; 1; 2] []
+  - : int list = [1; 2]
+
+Problem 4
+=========
+To solve the set intersection problem, I wrote a helper function
+`add_to_intersection` that is very similar to the helper function I wrote for
+Problem 3. It uses pattern matching and recursion to add elements that exist
+in both lists a and b, but do not yet exist in the output list. Once again,
+a union intersection with no duplicate items is returned.
+
+Problem 5
+=========
+To solve the set diff problem between lists a and b, head/tail pattern matching
+is used to recursively iterate through each element of a. If it is also present
+in b, it is skipped. If it is not present in b, it is added to the list.
+
+Problem 6
+=========
+To find the computed fixed point of a function f and point x, I first calculated
+f x. If x and (f x) pass the equality function eq, then we can return the
+computed fixed point x. Otherwise, we recursively call `computed_fixed_point`
+but with (f x) as the new initial point. If no computed fixed point exists,
+the function will loop infinitely.
+
+Problem 7
+=========
+The function `filter_reachable` takes a Tuple (top, gram)-- top is the top-level
+element of the grammar and gram is a list of grammar rules. To figure out which
+grammar rules are reachable, 3 helper functions are used:
+
+  1) extract_nts nt
+
+    This function takes nt, a list of supported non-terminal types. A custom
+    function iterates through the elements of a rule, appending non-terminal
+    types to an accumulator. In combination with the List.fold_left function,
+    `extract_nts` is able to return a list of non-terminals that the initial
+    nt list "unlocks".
+
+  2) find_valid_nts nt
+
+    This function uses extract_nts with an initial list, nt, and uses the
+    set_diff function defined in Problem 5 to get a list of newly discovered
+    valid non-terminal types. These new non-terminal types are then used to
+    recursively call `find_valid_nts`. This results in a breadth-first-search
+    approach that ends when no new non-terminal types are found.
+
+  3) find_valid_rules nt rules
+
+    This function accepts a list of valid non-terminal types, nt, and a list of
+    grammar rules. Recursion and head/tail pattern matching is used to iterate
+    through each rule and add rules that correspond to supported non-terminal
+    types. A list of supported rules is returned, in the same order that they
+    are initially listed.
+
+Finally, the following line is used to get a resulting grammar:
+
+  top, find_valid_rules (find_valid_nts [top]) gram
+
+The output's top-level element will always be the same as the input's. The
+list of valid grammar rules can be found by finding a list of valid
+non-terminals using `find_valid_nts [top]`, which is then fed into
+`find_valid_rules` with the original grammar rules, gram. We place top inside
+a one-element list for use with `find_valid_nts`.
