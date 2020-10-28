@@ -1,9 +1,51 @@
-My make_matcher function is implemented by using two corecursive functions: generate_expr and evaluate_expr. generate_expr takes a set of rules for a nonterminal symbol, and tests each one by using a BFS approach to call evaluate_expr. If no viable prefix is found by taking the path of the first rule, then the second rule is attempted, then the third and so on. evaluate_expr takes a rule definition expression and iterates through each token. If it encounters a terminal token, it makes sure it matches the fragment then uses recursion to iterate to the next token. If it encounters a nonterminal token, the set of rules for that token is passed back to generate_expr to be substituted into the expression. Ultimately, all the rules are applied in order until a prefix match of the given fragment is found.
+make_matcher
+============
+My make_matcher function is implemented by using two corecursive functions: 
+generate_expr and evaluate_expr. 
 
-I implemented make_parser by using a slightly modified version of make_parser that keeps track of the grammar rules it uses to build the input fragment. One key difference is that we are not satisfied with finding a prefix-- we must find a complete match. This is easy to implement by forcing the acceptor to only accept an empty list suffix. Another difference is that we want to keep track of the rules applied and return them in a tree structure. This tree is very difficult to form while initially finding a match because expressions with multiple non-terminals have a complex nested format. To solve this, we instead modify make_matcher to return the list of rules applied, then process this separately to get the output. We use the corecursive parse_expr and parse_descendant functions to do this. We parse each rule's tokens-- if it is a terminal symbol, we create a Leaf and parse the remaining tokens. If it is a non-terminal symbol, we know there must be a followup rule and pass this along to parse_descendant. This allows us to create a nested tree structure.
+generate_expr takes a set of rules for a 
+nonterminal symbol, and tests each one by using a BFS approach to call 
+evaluate_expr. If no viable prefix is found by taking the path of the first 
+rule, then the second rule is attempted, then the third and so on. 
 
-Some issues with these implementations are that they are reliant on rules being recursive-friendly. If the rules are not properly formed, it can result in infinite looping. For example, the rule set 
+evaluate_expr takes a rule definition expression and iterates through each 
+token. If it encounters a terminal token, it makes sure it matches the fragment 
+then uses recursion to iterate to the next token. If it encounters a 
+nonterminal token, the set of rules for that token is passed back to 
+generate_expr to be substituted into the expression. Ultimately, all the rules 
+are applied in order until a prefix match of the given fragment is found.
+
+make_parser
+===========
+I implemented make_parser by using a slightly modified version of make_parser 
+that keeps track of the grammar rules it uses to build the input fragment. One 
+key difference is that we are not satisfied with finding a prefix-- we must 
+find a complete match. This is easy to implement by forcing the acceptor to 
+only accept an empty list suffix. Another difference is that we want to keep 
+track of the rules applied and return them in a tree structure. This tree is 
+very difficult to form while initially finding a match because expressions with 
+multiple non-terminals have a complex nested format. To solve this, we instead 
+modify make_matcher to return the list of rules applied, then process this 
+separately to get the output. 
+
+We use the corecursive parse_expr and parse_descendant functions to do this. We 
+parse each rule's tokens-- if it is a terminal symbol, we create a Leaf and 
+parse the remaining tokens. If it is a non-terminal symbol, we know there must 
+be a followup rule and pass this along to parse_descendant. This allows us to 
+create a nested tree structure.
+
+Implementation Issues
+=====================
+Some issues with these implementations are that they are reliant on rules being 
+recursive-friendly. If the rules are not properly formed, it can result in 
+infinite looping. For example, the rule set 
     
     | Expr -> [[N Expr; T "foo"];[N Term]]
 
-will result in an infinitely growing expression as the amount of "foo" increases. A similar situation could occur with two rules that loop with each other. In order to rectify this, we could ensure that the length of the expression is not larger than the length of the desired fragment. This allows us to exit even if we do not know if the prefixes match.
+will result in an infinitely growing expression as the amount of "foo" 
+increases. A similar situation could occur with two rules that loop with each 
+other. 
+
+In order to rectify this, we could ensure that the length of the 
+expression is not larger than the length of the desired fragment. This allows 
+us to exit even if we do not know if the prefixes match.
