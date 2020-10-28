@@ -1,3 +1,5 @@
+let accept_all string = Some string
+
 type test_nonterminals = 
     | Top | Animal | Mammal | Plant 
 let test_grammar = 
