@@ -1,14 +1,25 @@
 Plain_Tower vs. Tower Speedup
 =============================
-I ran the following command to get the ratio of plain_tower latency to tower latency:
+I ran the following command to get the ratio of plain_tower latency to tower
+latency:
 
     ?- speedup(Ratio).
 
-This resulted in the following output:
+This uses the following test case, which must generate a solved puzzle given
+the counts:
+
+    tower(5, T,
+         counts([2,3,2,1,4],
+                [3,1,3,3,2],
+                [4,1,2,5,2],
+                [2,4,2,1,2])).
+
+...and resulted in the following output:
 
     Ratio = 991.5 ?
 
-The plain_tower solution performed significantly worse, taking 991.5 times as long as tower, which utilizes various finite domain solver functions.
+The plain_tower solution performed significantly worse, taking 991.5 times as
+long as tower, which utilizes various finite domain solver functions.
 
 Ambiguous Puzzle
 ================
