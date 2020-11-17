@@ -41,7 +41,8 @@ class UnsafeMemory {
 		throw new NumberFormatException(s);
     }
 
-    private static void dowork(int nThreads, long nTransitions, State s) throws InterruptedException {
+    private static void dowork(int nThreads, long nTransitions, State s)
+			throws InterruptedException {
 		var test = new SwapTest[nThreads];
 		var t = new Thread[nThreads];
 		var bean = ManagementFactory.getThreadMXBean();
