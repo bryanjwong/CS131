@@ -1,5 +1,5 @@
 #lang racket
-(provide expr-compare)
+(provide (all-defined-out))
 
 ;; Part 1: expr-compare
 
